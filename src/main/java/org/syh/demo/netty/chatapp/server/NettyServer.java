@@ -39,9 +39,9 @@ public class NettyServer {
     private static void bind(final ServerBootstrap serverBootstrap, final int port) {
         serverBootstrap.bind(port).addListener(future -> {
             if (future.isSuccess()) {
-                logger.info("Port {} binding successful", port);
+                logger.info("Server successfully bound to port {}", port);
             } else {
-                logger.error("Port {} binding failed", port);
+                logger.error("Failed to bind server to port {}", port);
             }
         });
     }

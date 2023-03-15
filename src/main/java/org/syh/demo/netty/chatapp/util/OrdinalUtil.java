@@ -1,6 +1,6 @@
 package org.syh.demo.netty.chatapp.util;
 
-public class Ordinal {
+public class OrdinalUtil {
     public static String getOrdinal(int cardinal) {
         String suffix = "th";
 

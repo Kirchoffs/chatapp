@@ -4,12 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.syh.demo.netty.chatapp.protocol.request.LoginRequestPacket;
+import org.syh.demo.netty.chatapp.protocol.request.MessageRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.response.LoginResponsePacket;
+import org.syh.demo.netty.chatapp.protocol.response.MessageResponsePacket;
 import org.syh.demo.netty.chatapp.serialize.Serializer;
 import org.syh.demo.netty.chatapp.serialize.impl.GSONSerializer;
 
 import static org.syh.demo.netty.chatapp.protocol.command.Command.LOGIN_REQUEST;
 import static org.syh.demo.netty.chatapp.protocol.command.Command.LOGIN_RESPONSE;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.MESSAGE_REQUEST;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.MESSAGE_RESPONSE;
 
 import io.netty.buffer.ByteBuf;
 
@@ -27,6 +31,8 @@ public class PacketCodec {
         packetTypeMap = new HashMap<>();
         packetTypeMap.put(LOGIN_REQUEST, LoginRequestPacket.class);
         packetTypeMap.put(LOGIN_RESPONSE, LoginResponsePacket.class);
+        packetTypeMap.put(MESSAGE_REQUEST, MessageRequestPacket.class);
+        packetTypeMap.put(MESSAGE_RESPONSE, MessageResponsePacket.class);
 
         serializerMap = new HashMap<>();
         Serializer serializer = new GSONSerializer();
