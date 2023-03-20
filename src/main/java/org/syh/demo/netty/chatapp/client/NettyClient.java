@@ -5,7 +5,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.syh.demo.netty.chatapp.client.handler.ClientHandler;
+import org.syh.demo.netty.chatapp.client.handler.LoginResponseHandler;
+import org.syh.demo.netty.chatapp.client.handler.MessageResponseHandler;
+import org.syh.demo.netty.chatapp.codec.PacketDecoder;
+import org.syh.demo.netty.chatapp.codec.PacketEncoder;
 import org.syh.demo.netty.chatapp.protocol.PacketCodec;
 import org.syh.demo.netty.chatapp.protocol.request.MessageRequestPacket;
 import org.syh.demo.netty.chatapp.util.LoginUtil;
@@ -45,7 +48,10 @@ public class NettyClient {
             .handler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) {
-                    ch.pipeline().addLast(new ClientHandler(loginLock, messageLock));
+                    ch.pipeline().addLast(new PacketDecoder());
+                    ch.pipeline().addLast(new LoginResponseHandler(loginLock));
+                    ch.pipeline().addLast(new MessageResponseHandler(messageLock));
+                    ch.pipeline().addLast(new PacketEncoder());
                 }
             });
             

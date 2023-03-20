@@ -2,7 +2,10 @@ package org.syh.demo.netty.chatapp.server;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.syh.demo.netty.chatapp.server.handler.ServerHandler;
+import org.syh.demo.netty.chatapp.codec.PacketDecoder;
+import org.syh.demo.netty.chatapp.codec.PacketEncoder;
+import org.syh.demo.netty.chatapp.server.handler.LoginRequestHandler;
+import org.syh.demo.netty.chatapp.server.handler.MessageRequestHandler;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -29,7 +32,10 @@ public class NettyServer {
             .childOption(ChannelOption.TCP_NODELAY, true)
             .childHandler(new ChannelInitializer<NioSocketChannel>() {
                 protected void initChannel(NioSocketChannel ch) {
-                    ch.pipeline().addLast(new ServerHandler());
+                    ch.pipeline().addLast(new PacketDecoder());
+                    ch.pipeline().addLast(new LoginRequestHandler());
+                    ch.pipeline().addLast(new MessageRequestHandler());
+                    ch.pipeline().addLast(new PacketEncoder());
                 }
             });
         
