@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.syh.demo.netty.chatapp.codec.PacketDecoder;
 import org.syh.demo.netty.chatapp.codec.PacketEncoder;
+import org.syh.demo.netty.chatapp.codec.Splitter;
 import org.syh.demo.netty.chatapp.server.handler.LoginRequestHandler;
 import org.syh.demo.netty.chatapp.server.handler.MessageRequestHandler;
 
@@ -32,6 +33,7 @@ public class NettyServer {
             .childOption(ChannelOption.TCP_NODELAY, true)
             .childHandler(new ChannelInitializer<NioSocketChannel>() {
                 protected void initChannel(NioSocketChannel ch) {
+                    ch.pipeline().addLast(new Splitter());
                     ch.pipeline().addLast(new PacketDecoder());
                     ch.pipeline().addLast(new LoginRequestHandler());
                     ch.pipeline().addLast(new MessageRequestHandler());

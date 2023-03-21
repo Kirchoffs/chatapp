@@ -13,7 +13,7 @@ ChannelInboundHandler
 - main method: <b>channelRead()</b>  
 - default implementation: <b>ChannelInboundHandlerAdapter</b>
 
-ChannelOutboundHandler: write()
+ChannelOutboundHandler
 - main method: <b>write()</b>
 - default implementation: <b>ChannelOutboundHandlerAdapter</b>
 
@@ -56,3 +56,10 @@ OutboundA
 - SimpleChannelInboundHandler<T> extends <b>ChannelInboundHandlerAdapter</b> 
 
 - ChannelInboundHandlerAdapter extends ChannelHandlerAdapter implements <b>ChannelInboundHandler</b>
+
+### Frame Decoder
+- FixedLengthFrameDecoder
+- LineBasedFrameDecoder
+- DelimiterBasedFrameDecoder
+- LengthFieldBasedFrameDecoder
+

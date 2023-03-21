@@ -9,6 +9,7 @@ import org.syh.demo.netty.chatapp.client.handler.LoginResponseHandler;
 import org.syh.demo.netty.chatapp.client.handler.MessageResponseHandler;
 import org.syh.demo.netty.chatapp.codec.PacketDecoder;
 import org.syh.demo.netty.chatapp.codec.PacketEncoder;
+import org.syh.demo.netty.chatapp.codec.Splitter;
 import org.syh.demo.netty.chatapp.protocol.PacketCodec;
 import org.syh.demo.netty.chatapp.protocol.request.MessageRequestPacket;
 import org.syh.demo.netty.chatapp.util.LoginUtil;
@@ -48,6 +49,7 @@ public class NettyClient {
             .handler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) {
+                    ch.pipeline().addLast(new Splitter());
                     ch.pipeline().addLast(new PacketDecoder());
                     ch.pipeline().addLast(new LoginResponseHandler(loginLock));
                     ch.pipeline().addLast(new MessageResponseHandler(messageLock));
