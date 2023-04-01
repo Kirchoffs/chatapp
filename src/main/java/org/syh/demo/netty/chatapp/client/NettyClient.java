@@ -11,6 +11,7 @@ import org.syh.demo.netty.chatapp.codec.PacketDecoder;
 import org.syh.demo.netty.chatapp.codec.PacketEncoder;
 import org.syh.demo.netty.chatapp.codec.Splitter;
 import org.syh.demo.netty.chatapp.protocol.PacketCodec;
+import org.syh.demo.netty.chatapp.protocol.request.LoginRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.request.MessageRequestPacket;
 import org.syh.demo.netty.chatapp.util.LoginUtil;
 import org.syh.demo.netty.chatapp.util.MessageUtil;
@@ -34,7 +35,6 @@ public class NettyClient {
 
     private static final Logger logger = LogManager.getLogger(NettyClient.class);
     private static Object loginLock = new Object();
-    private static Object messageLock = new Object();
 
     public static void main(String[] args) {
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -52,7 +52,7 @@ public class NettyClient {
                     ch.pipeline().addLast(new Splitter());
                     ch.pipeline().addLast(new PacketDecoder());
                     ch.pipeline().addLast(new LoginResponseHandler(loginLock));
-                    ch.pipeline().addLast(new MessageResponseHandler(messageLock));
+                    ch.pipeline().addLast(new MessageResponseHandler());
                     ch.pipeline().addLast(new PacketEncoder());
                 }
             });
@@ -69,9 +69,9 @@ public class NettyClient {
             } else if (retry == 0) {
                 logger.error("Unable to establish connection after {} attempts. Exiting program.", MAX_RETRY);
             } else {
-                int order = (MAX_RETRY - retry) + 1;
+                int order = MAX_RETRY - retry + 1;
                 int delay = 1 << order;
-                logger.warn("Connection attempt failed. Retrying for the {} time...", OrdinalUtil.getOrdinal(retry));
+                logger.warn("Connection attempt failed. Retrying for the {} time...", OrdinalUtil.getOrdinal(MAX_RETRY - retry + 1));
                 bootstrap
                     .config()
                     .group()
@@ -86,6 +86,13 @@ public class NettyClient {
 
     private static void startConsoleThread(Channel channel) {
         new Thread(() -> {
+            Scanner scanner = new Scanner(System.in);
+            LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
+            System.out.print("Please enter your username: ");
+            String username = scanner.nextLine();
+            loginRequestPacket.setUsername(username);
+            loginRequestPacket.setPassword("password");
+            channel.writeAndFlush(loginRequestPacket);
             synchronized (loginLock) {
                 while (!LoginUtil.hasLogin(channel)) {
                     try {
@@ -96,29 +103,12 @@ public class NettyClient {
                 }
             }
 
-            Scanner scanner = new Scanner(System.in);
             while (!Thread.interrupted()) {
                 if (LoginUtil.hasLogin(channel)) {
-                    System.out.print("Input message to the server: ");
-                    String line = scanner.nextLine();
-                    
                     MessageRequestPacket packet = new MessageRequestPacket();
-                    packet.setMessage(line);
-                    ByteBuf byteBuf = channel.alloc().buffer();
-                    PacketCodec.INSTANCE.encode(byteBuf, packet);
-                    channel.writeAndFlush(byteBuf);
-
-                    synchronized (messageLock) {
-                        while (!MessageUtil.hasMessageReceived(channel)) {
-                            try {
-                                messageLock.wait();
-                            } catch (InterruptedException e) {
-                                logger.error(e.getMessage());
-                            }
-                        }
-                    }
-
-                    MessageUtil.unsetAsMessageReceived(channel);
+                    packet.setToUserName(scanner.next());
+                    packet.setMessage(scanner.next());
+                    channel.writeAndFlush(packet);
                 }
             }
             scanner.close();

@@ -11,19 +11,13 @@ import io.netty.channel.SimpleChannelInboundHandler;
 public class MessageResponseHandler extends SimpleChannelInboundHandler<MessageResponsePacket> {
 
     private static final Logger logger = LogManager.getLogger(MessageResponseHandler.class);
-    private Object messageLock;
-
-    public MessageResponseHandler(Object messageLock) {
-        this.messageLock = messageLock;
-    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageResponsePacket messageResponsePacket) throws Exception {
-        synchronized (messageLock) {
-            logger.info("Received message from server: \"{}\"", messageResponsePacket.getMessage());
-            MessageUtil.setMessageReceived(ctx.channel());
-            messageLock.notifyAll();
-        }
+        String fromUserId = messageResponsePacket.getFromUserId();
+        String fromUserName = messageResponsePacket.getFromUserName();
+        System.out.println(fromUserId + ":" + fromUserName + " -> " + messageResponsePacket .getMessage());
+        MessageUtil.setMessageReceived(ctx.channel());
     }
     
 }

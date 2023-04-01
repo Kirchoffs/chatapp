@@ -3,6 +3,7 @@ package org.syh.demo.netty.chatapp.server.handler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.syh.demo.netty.chatapp.util.LoginUtil;
+import org.syh.demo.netty.chatapp.util.SessionUtil;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -12,7 +13,7 @@ public class AuthHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (!LoginUtil.hasLogin(ctx.channel())) {
+        if (!SessionUtil.hasLogin(ctx.channel())) {
             logger.error("Authentication failed, please login first");
             ctx.channel().close();
         } else {
@@ -24,7 +25,9 @@ public class AuthHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) {
         if (LoginUtil.hasLogin(ctx.channel())) {
-            logger.info("Current connection has completed the login authentication and does not need to be authenticated again. The AuthHandler has been be removed.");
+            logger.info(
+                "Current connection has completed the login authentication and does not need to be authenticated again. The AuthHandler has been be removed."
+            );
         } else {
             logger.info("No login authentication, shutdown the connection");
         }

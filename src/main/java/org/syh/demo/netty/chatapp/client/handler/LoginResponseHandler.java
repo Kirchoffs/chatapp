@@ -21,20 +21,11 @@ public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginRespo
 
     private static final Logger logger = LogManager.getLogger(LoginResponseHandler.class);
 
-    public void channelActive(ChannelHandlerContext ctx) {
-        LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
-        loginRequestPacket.setUserId(UUID.randomUUID().toString());
-        loginRequestPacket.setUsername("username");
-        loginRequestPacket.setPassword("password");
-    
-        ctx.channel().writeAndFlush(loginRequestPacket);
-    }
-
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginResponsePacket loginResponsePacket) {
         synchronized (loginLock) {
             if (loginResponsePacket.isSuccess()) {
-                logger.info("Login succeeded");
+                logger.info("Login succeeded: {} with userId {}", loginResponsePacket.getUserName(), loginResponsePacket.getUserId());
                 LoginUtil.setLogin(ctx.channel());
                 loginLock.notifyAll();
             } else {
