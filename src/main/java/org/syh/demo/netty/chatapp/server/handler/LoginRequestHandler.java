@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.syh.demo.netty.chatapp.protocol.request.LoginRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.response.LoginResponsePacket;
+import org.syh.demo.netty.chatapp.util.LoginUtil;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -21,10 +22,11 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
 
         if (valid(loginRequestPacket)) {
             logger.info("Login request succeeded");
+            LoginUtil.setLogin(ctx.channel());
             loginResponsePacket.setSuccess(true);
         } else {
             logger.info("Login request failed");
-            loginResponsePacket.setReason("Password not match");
+            loginResponsePacket.setReason("Username/Password not match");
             loginResponsePacket.setSuccess(false);
         }
         
@@ -32,7 +34,7 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
     }
 
     private boolean valid(LoginRequestPacket loginRequestPacket) {
-        return true;
+        return loginRequestPacket.getUsername().equals("admin");
     }
     
 }
