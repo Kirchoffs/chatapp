@@ -3,9 +3,21 @@ package org.syh.demo.netty.chatapp.protocol;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.syh.demo.netty.chatapp.protocol.request.CreateGroupRequestPacket;
+import org.syh.demo.netty.chatapp.protocol.request.ExitGroupRequestPacket;
+import org.syh.demo.netty.chatapp.protocol.request.JoinGroupRequestPacket;
+import org.syh.demo.netty.chatapp.protocol.request.ListGroupMembersRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.request.LoginRequestPacket;
+import org.syh.demo.netty.chatapp.protocol.request.LogoutRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.request.MessageRequestPacket;
+import org.syh.demo.netty.chatapp.protocol.response.CreateGroupResponsePacket;
+import org.syh.demo.netty.chatapp.protocol.response.ExitGroupResponsePacket;
+import org.syh.demo.netty.chatapp.protocol.response.JoinGroupResponsePacket;
+import org.syh.demo.netty.chatapp.protocol.response.ListGroupMembersResponsePacket;
 import org.syh.demo.netty.chatapp.protocol.response.LoginResponsePacket;
+import org.syh.demo.netty.chatapp.protocol.response.LogoutResponsePacket;
 import org.syh.demo.netty.chatapp.protocol.response.MessageResponsePacket;
 import org.syh.demo.netty.chatapp.serialize.Serializer;
 import org.syh.demo.netty.chatapp.serialize.impl.GSONSerializer;
@@ -14,6 +26,16 @@ import static org.syh.demo.netty.chatapp.protocol.command.Command.LOGIN_REQUEST;
 import static org.syh.demo.netty.chatapp.protocol.command.Command.LOGIN_RESPONSE;
 import static org.syh.demo.netty.chatapp.protocol.command.Command.MESSAGE_REQUEST;
 import static org.syh.demo.netty.chatapp.protocol.command.Command.MESSAGE_RESPONSE;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.LOGOUT_REQUEST;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.LOGOUT_RESPONSE;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.CREATE_GROUP_REQUEST;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.CREATE_GROUP_RESPONSE;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.LIST_GROUP_MEMBERS_REQUEST;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.LIST_GROUP_MEMBERS_RESPONSE;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.JOIN_GROUP_REQUEST;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.JOIN_GROUP_RESPONSE;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.EXIT_GROUP_REQUEST;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.EXIT_GROUP_RESPONSE;
 
 import io.netty.buffer.ByteBuf;
 
@@ -24,6 +46,8 @@ public class PacketCodec {
     public static final int MAGIC_NUMBER_LENGTH = 4;
     public static final int VERSION_LENGTH = 1;
 
+    private final Logger logger = LogManager.getLogger(PacketCodec.class);
+
     private final Map<Byte, Class<? extends Packet>> packetTypeMap;
     private final Map<Byte, Serializer> serializerMap;
 
@@ -33,6 +57,16 @@ public class PacketCodec {
         packetTypeMap.put(LOGIN_RESPONSE, LoginResponsePacket.class);
         packetTypeMap.put(MESSAGE_REQUEST, MessageRequestPacket.class);
         packetTypeMap.put(MESSAGE_RESPONSE, MessageResponsePacket.class);
+        packetTypeMap.put(LOGOUT_REQUEST, LogoutRequestPacket.class);
+        packetTypeMap.put(LOGOUT_RESPONSE, LogoutResponsePacket.class);
+        packetTypeMap.put(CREATE_GROUP_REQUEST, CreateGroupRequestPacket.class);
+        packetTypeMap.put(CREATE_GROUP_RESPONSE, CreateGroupResponsePacket.class);
+        packetTypeMap.put(LIST_GROUP_MEMBERS_REQUEST, ListGroupMembersRequestPacket.class);
+        packetTypeMap.put(LIST_GROUP_MEMBERS_RESPONSE, ListGroupMembersResponsePacket.class);
+        packetTypeMap.put(JOIN_GROUP_REQUEST, JoinGroupRequestPacket.class);
+        packetTypeMap.put(JOIN_GROUP_RESPONSE, JoinGroupResponsePacket.class);
+        packetTypeMap.put(EXIT_GROUP_REQUEST, ExitGroupRequestPacket.class);
+        packetTypeMap.put(EXIT_GROUP_RESPONSE, ExitGroupResponsePacket.class);
 
         serializerMap = new HashMap<>();
         Serializer serializer = new GSONSerializer();
@@ -65,7 +99,10 @@ public class PacketCodec {
         Serializer serializer = getSerializer(serializeAlgorithm);
     
         if (requestType != null && serializer != null) {
+            logger.debug("decode packet: {}, serializer: {}.", requestType, serializer);
             return serializer.deserialize(requestType, bytes);
+        } else {
+            logger.warn("Unknown packet type: {}, or unknown serializer: {}.", requestType, serializer);
         }
     
         return null;

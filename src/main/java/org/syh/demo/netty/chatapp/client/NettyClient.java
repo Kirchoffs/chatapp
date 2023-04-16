@@ -5,20 +5,22 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.syh.demo.netty.chatapp.client.console.ConsoleCommandManager;
+import org.syh.demo.netty.chatapp.client.console.LoginConsoleCommand;
+import org.syh.demo.netty.chatapp.client.handler.CreateGroupResponseHandler;
+import org.syh.demo.netty.chatapp.client.handler.ExitGroupResponseHandler;
+import org.syh.demo.netty.chatapp.client.handler.JoinGroupResponseHandler;
+import org.syh.demo.netty.chatapp.client.handler.ListGroupMembersResponseHandler;
 import org.syh.demo.netty.chatapp.client.handler.LoginResponseHandler;
+import org.syh.demo.netty.chatapp.client.handler.LogoutResponseHandler;
 import org.syh.demo.netty.chatapp.client.handler.MessageResponseHandler;
 import org.syh.demo.netty.chatapp.codec.PacketDecoder;
 import org.syh.demo.netty.chatapp.codec.PacketEncoder;
 import org.syh.demo.netty.chatapp.codec.Splitter;
-import org.syh.demo.netty.chatapp.protocol.PacketCodec;
-import org.syh.demo.netty.chatapp.protocol.request.LoginRequestPacket;
-import org.syh.demo.netty.chatapp.protocol.request.MessageRequestPacket;
 import org.syh.demo.netty.chatapp.util.LoginUtil;
-import org.syh.demo.netty.chatapp.util.MessageUtil;
 import org.syh.demo.netty.chatapp.util.OrdinalUtil;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -52,6 +54,11 @@ public class NettyClient {
                     ch.pipeline().addLast(new Splitter());
                     ch.pipeline().addLast(new PacketDecoder());
                     ch.pipeline().addLast(new LoginResponseHandler(loginLock));
+                    ch.pipeline().addLast(new LogoutResponseHandler(loginLock));
+                    ch.pipeline().addLast(new CreateGroupResponseHandler());
+                    ch.pipeline().addLast(new JoinGroupResponseHandler());
+                    ch.pipeline().addLast(new ListGroupMembersResponseHandler());
+                    ch.pipeline().addLast(new ExitGroupResponseHandler());
                     ch.pipeline().addLast(new MessageResponseHandler());
                     ch.pipeline().addLast(new PacketEncoder());
                 }
@@ -85,30 +92,16 @@ public class NettyClient {
     }
 
     private static void startConsoleThread(Channel channel) {
+        ConsoleCommandManager consoleCommandManager = new ConsoleCommandManager(loginLock);
+        LoginConsoleCommand loginConsoleCommand = new LoginConsoleCommand(loginLock);
+        
+        Scanner scanner = new Scanner(System.in);
         new Thread(() -> {
-            Scanner scanner = new Scanner(System.in);
-            LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
-            System.out.print("Please enter your username: ");
-            String username = scanner.nextLine();
-            loginRequestPacket.setUsername(username);
-            loginRequestPacket.setPassword("password");
-            channel.writeAndFlush(loginRequestPacket);
-            synchronized (loginLock) {
-                while (!LoginUtil.hasLogin(channel)) {
-                    try {
-                        loginLock.wait();
-                    } catch (InterruptedException e) {
-                        logger.error(e.getMessage());
-                    }
-                }
-            }
-
             while (!Thread.interrupted()) {
                 if (LoginUtil.hasLogin(channel)) {
-                    MessageRequestPacket packet = new MessageRequestPacket();
-                    packet.setToUserName(scanner.next());
-                    packet.setMessage(scanner.next());
-                    channel.writeAndFlush(packet);
+                    consoleCommandManager.exec(scanner, channel);
+                } else {
+                    loginConsoleCommand.exec(scanner, channel);
                 }
             }
             scanner.close();

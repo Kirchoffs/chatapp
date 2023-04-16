@@ -8,5 +8,6 @@ public interface Attributes {
     AttributeKey<Session> SESSION = AttributeKey.newInstance("session");
     AttributeKey<String> USER = AttributeKey.newInstance("user");
     AttributeKey<Boolean> LOGIN = AttributeKey.newInstance("login");
+    AttributeKey<Boolean> LOGIN_UPDATE = AttributeKey.newInstance("loginUpdate");
     AttributeKey<Boolean> MESSAGE_RECEIVED = AttributeKey.newInstance("messageReceived");
 }

@@ -2,14 +2,13 @@ package org.syh.demo.netty.chatapp.server.handler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.syh.demo.netty.chatapp.util.LoginUtil;
 import org.syh.demo.netty.chatapp.util.SessionUtil;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
 public class AuthHandler extends ChannelInboundHandlerAdapter {
-    private static final Logger logger = LogManager.getLogger(LoginRequestHandler.class);
+    private final Logger logger = LogManager.getLogger(AuthHandler.class);
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -24,7 +23,7 @@ public class AuthHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) {
-        if (LoginUtil.hasLogin(ctx.channel())) {
+        if (SessionUtil.hasLogin(ctx.channel())) {
             logger.info(
                 "Current connection has completed the login authentication and does not need to be authenticated again. The AuthHandler has been be removed."
             );

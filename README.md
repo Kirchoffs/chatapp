@@ -2,22 +2,22 @@
 
 ## Netty Notes
 ### Channel & ChannelPipeline
-From both the server-side and client-side perspectives, in the entire Netty framework, one connection corresponds to one <b>Channel</b>. All processing logic for this Channel is within an object called the <b>ChannelPipeline</b>, which is a bidirectional linked list structure. The relationship between the ChannelPipeline and Channel is one-to-one.
+From both the server-side and client-side perspectives, in the entire Netty framework, one connection corresponds to one __Channel__. All processing logic for this Channel is within an object called the __ChannelPipeline__, which is a bidirectional linked list structure. The relationship between the ChannelPipeline and Channel is one-to-one.
 
-Each node in the ChannelPipeline is a <b>ChannelHandlerContext</b> object, which can obtain all contextual information related to the Channel. This object wraps an important object called the <b>ChannelHandler</b>, which is responsible for processing logic.
+Each node in the ChannelPipeline is a __ChannelHandlerContext__ object, which can obtain all contextual information related to the Channel. This object wraps an important object called the __ChannelHandler__, which is responsible for processing logic.
 
 ### ChannelHandler
-<b>1\. It has two main interfaces: ChannelInboundHandler & ChannelOutBoundHandler</b>
+__1\. It has two main interfaces: ChannelInboundHandler & ChannelOutBoundHandler__
 
 ChannelInboundHandler
-- main method: <b>channelRead()</b>  
-- default implementation: <b>ChannelInboundHandlerAdapter</b>
+- main method: __channelRead()__  
+- default implementation: __ChannelInboundHandlerAdapter__
 
 ChannelOutboundHandler
-- main method: <b>write()</b>
-- default implementation: <b>ChannelOutboundHandlerAdapter</b>
+- main method: __write()__
+- default implementation: __ChannelOutboundHandlerAdapter__
 
-<b>2\. Call order:</b>
+__2\. Call order:__
 
 Code:
 ```
@@ -51,13 +51,13 @@ OutboundB
 OutboundA
 ```
 
-<b>3\. Inheritance</b>
+__3\. Inheritance__
 
-- SimpleChannelInboundHandler<T> extends <b>ChannelInboundHandlerAdapter</b> 
+- SimpleChannelInboundHandler<T> extends __ChannelInboundHandlerAdapter__ 
 
-- ChannelInboundHandlerAdapter extends ChannelHandlerAdapter implements <b>ChannelInboundHandler</b>
+- ChannelInboundHandlerAdapter extends ChannelHandlerAdapter implements __ChannelInboundHandler__
 
-<b>4\. Life cycle of ChannelHandler</b>
+__4\. Life cycle of ChannelHandler__
 
 ```
 public class LifeCyCleTestHandler extends ChannelInboundHandlerAdapter {
@@ -115,7 +115,7 @@ handlerAdded() -> channelRegistered() -> channelActive() -> channelRead() -> cha
 
 channelInactive() -> channelUnregistered() -> handlerRemoved()
 
-<b>5\. ChannelInitializer</b>
+__5\. ChannelInitializer__
 - initChannel()
 - both handlerAdded() and channelRegistered() call initChannel()
 - initChannel() uses `initMap.add(ctx)` to avoid re-entrance
@@ -126,3 +126,12 @@ channelInactive() -> channelUnregistered() -> handlerRemoved()
 - DelimiterBasedFrameDecoder
 - LengthFieldBasedFrameDecoder
 
+## Other Notes
+### Codec
+A codec is a device or computer program that encodes or decodes a data stream or signal. Codec is a portmanteau of coder/decoder.
+
+### Java 11 String
+- strip(): Removes the white space from both, beginning and the end of string
+- stripLeading(): Removes the white space from the beginning
+- stripTrailing(): Removes the white space from the end
+- isBlank(): Indicates if the String is empty or contains only white space characters

@@ -14,28 +14,28 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRequestPacket> {
-    private Logger logger  = LogManager.getLogger(MessageRequestHandler.class);
+    private final Logger logger  = LogManager.getLogger(MessageRequestHandler.class);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, MessageRequestPacket messageRequestPacket) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, MessageRequestPacket requestPacket) throws Exception {
         Session session = SessionUtil.getSession(ctx.channel());
 
         logger.info(
             "Received message from client {}: {}", 
             ctx.channel().attr(Attributes.USER).get(), 
-            messageRequestPacket.getMessage()
+            requestPacket.getMessage()
         );
 
-        MessageResponsePacket messageResponsePacket = new MessageResponsePacket();
-        messageResponsePacket.setFromUserId(session.getUserId());
-        messageResponsePacket.setFromUserName(session.getUserName());
-        messageResponsePacket.setMessage(messageRequestPacket.getMessage());
-        String toUserId = UserUtil.getUserId(messageRequestPacket.getToUserName());
+        MessageResponsePacket responsePacket = new MessageResponsePacket();
+        responsePacket.setFromUserId(session.getUserId());
+        responsePacket.setFromUserName(session.getUserName());
+        responsePacket.setMessage(requestPacket.getMessage());
+        String toUserId = UserUtil.getUserId(requestPacket.getToUserName());
         Channel toUserChannel = SessionUtil.getChannel(toUserId);
         if (toUserChannel != null && SessionUtil.hasLogin(toUserChannel)) {
-            toUserChannel.writeAndFlush(messageResponsePacket);
+            toUserChannel.writeAndFlush(responsePacket);
         } else {
-            logger.error("User {} is not online", messageRequestPacket.getToUserName());
+            logger.error("User {} is not online", requestPacket.getToUserName());
         }
     }
 }
