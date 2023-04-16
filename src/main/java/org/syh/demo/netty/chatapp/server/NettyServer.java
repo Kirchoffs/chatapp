@@ -8,6 +8,7 @@ import org.syh.demo.netty.chatapp.codec.Splitter;
 import org.syh.demo.netty.chatapp.server.handler.AuthHandler;
 import org.syh.demo.netty.chatapp.server.handler.CreateGroupRequestHandler;
 import org.syh.demo.netty.chatapp.server.handler.ExitGroupRequestHandler;
+import org.syh.demo.netty.chatapp.server.handler.GroupMessageRequestHandler;
 import org.syh.demo.netty.chatapp.server.handler.JoinGroupRequestHandler;
 import org.syh.demo.netty.chatapp.server.handler.ListGroupMembersRequestHandler;
 import org.syh.demo.netty.chatapp.server.handler.LoginRequestHandler;
@@ -42,13 +43,14 @@ public class NettyServer {
                     ch.pipeline().addLast(new Splitter());
                     ch.pipeline().addLast(new PacketDecoder());
                     ch.pipeline().addLast(new LoginRequestHandler());
+                    ch.pipeline().addLast(new LogoutRequestHandler());
                     ch.pipeline().addLast(new AuthHandler());
                     ch.pipeline().addLast(new CreateGroupRequestHandler());
                     ch.pipeline().addLast(new JoinGroupRequestHandler());
                     ch.pipeline().addLast(new ExitGroupRequestHandler());
                     ch.pipeline().addLast(new ListGroupMembersRequestHandler());
+                    ch.pipeline().addLast(new GroupMessageRequestHandler());
                     ch.pipeline().addLast(new MessageRequestHandler());
-                    ch.pipeline().addLast(new LogoutRequestHandler());
                     ch.pipeline().addLast(new PacketEncoder());
                 }
             });

@@ -9,10 +9,10 @@ import io.netty.channel.Channel;
 public class SendToUserConsoleCommand implements ConsoleCommand {
     @Override
     public void exec(Scanner scanner, Channel channel) {
-        System.out.print("Please enter the username of the person you want to talk to: ");
+        System.out.print("Enter user ID: ");
         String toUserId = scanner.nextLine();
 
-        System.out.print("Please enter the message you want to send: ");
+        System.out.print("Enter message: ");
         String message = scanner.nextLine();
 
         channel.writeAndFlush(new MessageRequestPacket(toUserId, message));

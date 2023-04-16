@@ -19,6 +19,7 @@ public class GroupUtil {
 
     public static synchronized String generateAndRegisterUniqueGroupId(List<String> userIdList) {
         String groupId;
+        
         do {
             groupId = String.valueOf((int) (Math.random() * 100000));
         } while (groupIdSet.contains(groupId));
@@ -36,12 +37,14 @@ public class GroupUtil {
         channelGroupMap.remove(groupId);
     }
 
-    public static void addToChannelGroup(String groupId, Channel channel) {
+    public static boolean addToChannelGroup(String groupId, Channel channel) {
         ChannelGroup channelGroup = channelGroupMap.get(groupId);
         if (channelGroup != null) {
             channelGroup.add(channel);
+            return true;
         } else {
-            logger.warn("Channel group not found, groupId: {}", groupId);
+            logger.warn("Channel group not found, group ID: {}", groupId);
+            return false;
         }
     }
 
@@ -50,14 +53,14 @@ public class GroupUtil {
         if (channelGroup != null) {
             channelGroup.remove(channel);
         } else {
-            logger.warn("Channel group not found, groupId: {}", groupId);
+            logger.warn("Channel group not found, group ID: {}", groupId);
         }
     }
 
     public static ChannelGroup getChannelGroup(String groupId) {
         ChannelGroup channelGroup = channelGroupMap.get(groupId);
         if (channelGroup == null) {
-            logger.warn("Channel group not found, groupId: {}", groupId);
+            logger.warn("Channel group not found, group ID: {}", groupId);
         }
         return channelGroup;
     }

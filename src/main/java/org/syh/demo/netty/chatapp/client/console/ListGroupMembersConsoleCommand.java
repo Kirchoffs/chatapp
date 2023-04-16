@@ -11,7 +11,7 @@ public class ListGroupMembersConsoleCommand implements ConsoleCommand {
     public void exec(Scanner scanner, Channel channel) {
         ListGroupMembersRequestPacket listGroupMembersRequestPacket = new ListGroupMembersRequestPacket();
         
-        System.out.print("Please enter group Id: ");
+        System.out.print("Please enter group ID: ");
         String groupId = scanner.nextLine();
 
         listGroupMembersRequestPacket.setGroupId(groupId);

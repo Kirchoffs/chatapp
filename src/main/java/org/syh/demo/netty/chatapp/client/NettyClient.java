@@ -9,6 +9,7 @@ import org.syh.demo.netty.chatapp.client.console.ConsoleCommandManager;
 import org.syh.demo.netty.chatapp.client.console.LoginConsoleCommand;
 import org.syh.demo.netty.chatapp.client.handler.CreateGroupResponseHandler;
 import org.syh.demo.netty.chatapp.client.handler.ExitGroupResponseHandler;
+import org.syh.demo.netty.chatapp.client.handler.GroupMessageResponseHandler;
 import org.syh.demo.netty.chatapp.client.handler.JoinGroupResponseHandler;
 import org.syh.demo.netty.chatapp.client.handler.ListGroupMembersResponseHandler;
 import org.syh.demo.netty.chatapp.client.handler.LoginResponseHandler;
@@ -57,8 +58,9 @@ public class NettyClient {
                     ch.pipeline().addLast(new LogoutResponseHandler(loginLock));
                     ch.pipeline().addLast(new CreateGroupResponseHandler());
                     ch.pipeline().addLast(new JoinGroupResponseHandler());
-                    ch.pipeline().addLast(new ListGroupMembersResponseHandler());
                     ch.pipeline().addLast(new ExitGroupResponseHandler());
+                    ch.pipeline().addLast(new ListGroupMembersResponseHandler());
+                    ch.pipeline().addLast(new GroupMessageResponseHandler());
                     ch.pipeline().addLast(new MessageResponseHandler());
                     ch.pipeline().addLast(new PacketEncoder());
                 }

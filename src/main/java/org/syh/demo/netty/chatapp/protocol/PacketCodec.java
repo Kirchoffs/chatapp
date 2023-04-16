@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.syh.demo.netty.chatapp.protocol.request.CreateGroupRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.request.ExitGroupRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.request.JoinGroupRequestPacket;
+import org.syh.demo.netty.chatapp.protocol.request.GroupMessageRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.request.ListGroupMembersRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.request.LoginRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.request.LogoutRequestPacket;
@@ -15,6 +16,7 @@ import org.syh.demo.netty.chatapp.protocol.request.MessageRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.response.CreateGroupResponsePacket;
 import org.syh.demo.netty.chatapp.protocol.response.ExitGroupResponsePacket;
 import org.syh.demo.netty.chatapp.protocol.response.JoinGroupResponsePacket;
+import org.syh.demo.netty.chatapp.protocol.response.GroupMessageResponsePacket;
 import org.syh.demo.netty.chatapp.protocol.response.ListGroupMembersResponsePacket;
 import org.syh.demo.netty.chatapp.protocol.response.LoginResponsePacket;
 import org.syh.demo.netty.chatapp.protocol.response.LogoutResponsePacket;
@@ -36,6 +38,8 @@ import static org.syh.demo.netty.chatapp.protocol.command.Command.JOIN_GROUP_REQ
 import static org.syh.demo.netty.chatapp.protocol.command.Command.JOIN_GROUP_RESPONSE;
 import static org.syh.demo.netty.chatapp.protocol.command.Command.EXIT_GROUP_REQUEST;
 import static org.syh.demo.netty.chatapp.protocol.command.Command.EXIT_GROUP_RESPONSE;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.GROUP_MESSAGE_REQUEST;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.GROUP_MESSAGE_RESPONSE;
 
 import io.netty.buffer.ByteBuf;
 
@@ -67,6 +71,8 @@ public class PacketCodec {
         packetTypeMap.put(JOIN_GROUP_RESPONSE, JoinGroupResponsePacket.class);
         packetTypeMap.put(EXIT_GROUP_REQUEST, ExitGroupRequestPacket.class);
         packetTypeMap.put(EXIT_GROUP_RESPONSE, ExitGroupResponsePacket.class);
+        packetTypeMap.put(GROUP_MESSAGE_REQUEST, GroupMessageRequestPacket.class);
+        packetTypeMap.put(GROUP_MESSAGE_RESPONSE, GroupMessageResponsePacket.class);
 
         serializerMap = new HashMap<>();
         Serializer serializer = new GSONSerializer();
