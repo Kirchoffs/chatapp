@@ -3,7 +3,6 @@ package org.syh.demo.netty.chatapp.client.console;
 import io.netty.channel.Channel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;

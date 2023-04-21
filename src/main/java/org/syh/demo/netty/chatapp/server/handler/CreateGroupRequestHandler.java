@@ -11,12 +11,16 @@ import org.syh.demo.netty.chatapp.util.SessionUtil;
 import org.syh.demo.netty.chatapp.util.UserUtil;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 
+@ChannelHandler.Sharable
 public class CreateGroupRequestHandler extends SimpleChannelInboundHandler<CreateGroupRequestPacket> {
+    public static final CreateGroupRequestHandler INSTANCE = new CreateGroupRequestHandler();
+
     private final Logger logger = LogManager.getLogger(CreateGroupRequestHandler.class);
 
     @Override

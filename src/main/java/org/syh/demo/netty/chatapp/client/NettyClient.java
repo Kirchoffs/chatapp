@@ -10,14 +10,17 @@ import org.syh.demo.netty.chatapp.client.console.LoginConsoleCommand;
 import org.syh.demo.netty.chatapp.client.handler.CreateGroupResponseHandler;
 import org.syh.demo.netty.chatapp.client.handler.ExitGroupResponseHandler;
 import org.syh.demo.netty.chatapp.client.handler.GroupMessageResponseHandler;
+import org.syh.demo.netty.chatapp.client.handler.HeartBeatTimerHandler;
 import org.syh.demo.netty.chatapp.client.handler.JoinGroupResponseHandler;
 import org.syh.demo.netty.chatapp.client.handler.ListGroupMembersResponseHandler;
 import org.syh.demo.netty.chatapp.client.handler.LoginResponseHandler;
 import org.syh.demo.netty.chatapp.client.handler.LogoutResponseHandler;
 import org.syh.demo.netty.chatapp.client.handler.MessageResponseHandler;
+import org.syh.demo.netty.chatapp.client.handler.MessageStatusResponseHandler;
 import org.syh.demo.netty.chatapp.codec.PacketDecoder;
 import org.syh.demo.netty.chatapp.codec.PacketEncoder;
 import org.syh.demo.netty.chatapp.codec.Splitter;
+import org.syh.demo.netty.chatapp.handler.IMIdleStateHandler;
 import org.syh.demo.netty.chatapp.util.LoginUtil;
 import org.syh.demo.netty.chatapp.util.OrdinalUtil;
 
@@ -52,6 +55,7 @@ public class NettyClient {
             .handler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) {
+                    ch.pipeline().addLast(new IMIdleStateHandler());
                     ch.pipeline().addLast(new Splitter());
                     ch.pipeline().addLast(new PacketDecoder());
                     ch.pipeline().addLast(new LoginResponseHandler(loginLock));
@@ -62,7 +66,9 @@ public class NettyClient {
                     ch.pipeline().addLast(new ListGroupMembersResponseHandler());
                     ch.pipeline().addLast(new GroupMessageResponseHandler());
                     ch.pipeline().addLast(new MessageResponseHandler());
+                    ch.pipeline().addLast(new MessageStatusResponseHandler());
                     ch.pipeline().addLast(new PacketEncoder());
+                    ch.pipeline().addLast(new HeartBeatTimerHandler());
                 }
             });
             

@@ -9,6 +9,7 @@ import org.syh.demo.netty.chatapp.protocol.request.CreateGroupRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.request.ExitGroupRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.request.JoinGroupRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.request.GroupMessageRequestPacket;
+import org.syh.demo.netty.chatapp.protocol.request.HeartBeatRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.request.ListGroupMembersRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.request.LoginRequestPacket;
 import org.syh.demo.netty.chatapp.protocol.request.LogoutRequestPacket;
@@ -17,10 +18,12 @@ import org.syh.demo.netty.chatapp.protocol.response.CreateGroupResponsePacket;
 import org.syh.demo.netty.chatapp.protocol.response.ExitGroupResponsePacket;
 import org.syh.demo.netty.chatapp.protocol.response.JoinGroupResponsePacket;
 import org.syh.demo.netty.chatapp.protocol.response.GroupMessageResponsePacket;
+import org.syh.demo.netty.chatapp.protocol.response.HeartBeatResponsePacket;
 import org.syh.demo.netty.chatapp.protocol.response.ListGroupMembersResponsePacket;
 import org.syh.demo.netty.chatapp.protocol.response.LoginResponsePacket;
 import org.syh.demo.netty.chatapp.protocol.response.LogoutResponsePacket;
 import org.syh.demo.netty.chatapp.protocol.response.MessageResponsePacket;
+import org.syh.demo.netty.chatapp.protocol.response.MessageStatusResponsePacket;
 import org.syh.demo.netty.chatapp.serialize.Serializer;
 import org.syh.demo.netty.chatapp.serialize.impl.GSONSerializer;
 
@@ -40,6 +43,9 @@ import static org.syh.demo.netty.chatapp.protocol.command.Command.EXIT_GROUP_REQ
 import static org.syh.demo.netty.chatapp.protocol.command.Command.EXIT_GROUP_RESPONSE;
 import static org.syh.demo.netty.chatapp.protocol.command.Command.GROUP_MESSAGE_REQUEST;
 import static org.syh.demo.netty.chatapp.protocol.command.Command.GROUP_MESSAGE_RESPONSE;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.MESSAGE_STATUS_RESPONSE;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.HEARTBEAT_REQUEST;
+import static org.syh.demo.netty.chatapp.protocol.command.Command.HEARTBEAT_RESPONSE;
 
 import io.netty.buffer.ByteBuf;
 
@@ -73,6 +79,9 @@ public class PacketCodec {
         packetTypeMap.put(EXIT_GROUP_RESPONSE, ExitGroupResponsePacket.class);
         packetTypeMap.put(GROUP_MESSAGE_REQUEST, GroupMessageRequestPacket.class);
         packetTypeMap.put(GROUP_MESSAGE_RESPONSE, GroupMessageResponsePacket.class);
+        packetTypeMap.put(MESSAGE_STATUS_RESPONSE, MessageStatusResponsePacket.class);
+        packetTypeMap.put(HEARTBEAT_REQUEST, HeartBeatRequestPacket.class);
+        packetTypeMap.put(HEARTBEAT_RESPONSE, HeartBeatResponsePacket.class);
 
         serializerMap = new HashMap<>();
         Serializer serializer = new GSONSerializer();

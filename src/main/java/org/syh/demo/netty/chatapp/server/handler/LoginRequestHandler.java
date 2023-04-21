@@ -9,10 +9,14 @@ import org.syh.demo.netty.chatapp.session.Session;
 import org.syh.demo.netty.chatapp.util.SessionUtil;
 import org.syh.demo.netty.chatapp.util.UserUtil;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+@ChannelHandler.Sharable
 public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginRequestPacket> {
+    public static final LoginRequestHandler INSTANCE = new LoginRequestHandler();
+
     private final Logger logger = LogManager.getLogger(LoginRequestHandler.class);
 
     @Override
@@ -26,7 +30,6 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
 
         if (valid(requestPacket) && !UserUtil.isUserLogged(username)) {
             logger.info("Login request succeeded: user {}", username);
-            ctx.channel().attr(Attributes.USER).set(username);
             String userId = UserUtil.generateAndRegisterUniqueUserId(username);
             SessionUtil.bindSession(new Session(userId, username), ctx.channel());
             responsePacket.setUserId(userId);
@@ -42,7 +45,7 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
             }
         }
         
-        ctx.channel().writeAndFlush(responsePacket);
+        ctx.writeAndFlush(responsePacket);
     }
 
     @Override

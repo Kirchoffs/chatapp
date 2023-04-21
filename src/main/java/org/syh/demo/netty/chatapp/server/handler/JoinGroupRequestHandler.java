@@ -7,10 +7,14 @@ import org.syh.demo.netty.chatapp.protocol.response.JoinGroupResponsePacket;
 import org.syh.demo.netty.chatapp.util.GroupUtil;
 import org.syh.demo.netty.chatapp.util.SessionUtil;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+@ChannelHandler.Sharable
 public class JoinGroupRequestHandler extends SimpleChannelInboundHandler<JoinGroupRequestPacket> {
+    public static final JoinGroupRequestHandler INSTANCE = new JoinGroupRequestHandler();
+
     private final Logger logger = LogManager.getLogger(JoinGroupRequestHandler.class);
 
     @Override
@@ -28,6 +32,6 @@ public class JoinGroupRequestHandler extends SimpleChannelInboundHandler<JoinGro
             logger.warn("Group {} not found", groupId);
         }
 
-        ctx.channel().writeAndFlush(responsePacket);
+        ctx.writeAndFlush(responsePacket);
     }
 }

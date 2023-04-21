@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.syh.demo.netty.chatapp.server.exception.ChannelGroupNotFoundException;
 
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
@@ -57,10 +58,11 @@ public class GroupUtil {
         }
     }
 
-    public static ChannelGroup getChannelGroup(String groupId) {
+    public static ChannelGroup getChannelGroup(String groupId) throws ChannelGroupNotFoundException {
         ChannelGroup channelGroup = channelGroupMap.get(groupId);
         if (channelGroup == null) {
             logger.warn("Channel group not found, group ID: {}", groupId);
+            throw new ChannelGroupNotFoundException(String.format("Group {} not found", groupId));
         }
         return channelGroup;
     }

@@ -120,6 +120,9 @@ __5\. ChannelInitializer__
 - both handlerAdded() and channelRegistered() call initChannel()
 - initChannel() uses `initMap.add(ctx)` to avoid re-entrance
 
+__6\. Difference between ctx.writeAndFlush() and ctx.channel().writeAndFlush()__  
+`ctx.writeAndFlush()` will ignore all the outBound handlers after it, while `ctx.channel().writeAndFlush()` will let the data go through all the handlers including the one after it.
+
 ### Frame Decoder
 - FixedLengthFrameDecoder
 - LineBasedFrameDecoder

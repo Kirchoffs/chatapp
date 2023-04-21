@@ -17,4 +17,7 @@ public interface Command {
     Byte EXIT_GROUP_RESPONSE = 14;
     Byte GROUP_MESSAGE_REQUEST = 15;
     Byte GROUP_MESSAGE_RESPONSE = 16;
+    Byte MESSAGE_STATUS_RESPONSE = 17;
+    Byte HEARTBEAT_REQUEST = 18;
+    Byte HEARTBEAT_RESPONSE = 19;
 }

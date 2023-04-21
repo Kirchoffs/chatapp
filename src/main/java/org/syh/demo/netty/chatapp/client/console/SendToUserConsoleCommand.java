@@ -9,7 +9,7 @@ import io.netty.channel.Channel;
 public class SendToUserConsoleCommand implements ConsoleCommand {
     @Override
     public void exec(Scanner scanner, Channel channel) {
-        System.out.print("Enter user ID: ");
+        System.out.print("Enter user name: ");
         String toUserId = scanner.nextLine();
 
         System.out.print("Enter message: ");

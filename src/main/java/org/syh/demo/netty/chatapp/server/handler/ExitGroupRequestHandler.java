@@ -7,11 +7,15 @@ import org.syh.demo.netty.chatapp.protocol.response.ExitGroupResponsePacket;
 import org.syh.demo.netty.chatapp.util.GroupUtil;
 import org.syh.demo.netty.chatapp.util.SessionUtil;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 
+@ChannelHandler.Sharable
 public class ExitGroupRequestHandler extends SimpleChannelInboundHandler<ExitGroupRequestPacket> {
+    public static final ExitGroupRequestHandler INSTANCE = new ExitGroupRequestHandler();
+
     private final Logger logger = LogManager.getLogger(ExitGroupRequestHandler.class);
 
     @Override

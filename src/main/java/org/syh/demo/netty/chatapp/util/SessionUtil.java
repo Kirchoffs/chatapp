@@ -31,6 +31,10 @@ public class SessionUtil {
         return channel.attr(Attributes.SESSION).get();
     }
 
+    public static String getUserName(Channel channel) {
+        return channel.attr(Attributes.SESSION).get().getUserName();
+    }
+
     public static Channel getChannel(String userId) {
         if (userId == null) {
             return null;

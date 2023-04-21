@@ -2,18 +2,13 @@ package org.syh.demo.netty.chatapp.server;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.syh.demo.netty.chatapp.codec.PacketDecoder;
-import org.syh.demo.netty.chatapp.codec.PacketEncoder;
+import org.syh.demo.netty.chatapp.codec.PacketCodecHandler;
 import org.syh.demo.netty.chatapp.codec.Splitter;
+import org.syh.demo.netty.chatapp.handler.IMIdleStateHandler;
 import org.syh.demo.netty.chatapp.server.handler.AuthHandler;
-import org.syh.demo.netty.chatapp.server.handler.CreateGroupRequestHandler;
-import org.syh.demo.netty.chatapp.server.handler.ExitGroupRequestHandler;
-import org.syh.demo.netty.chatapp.server.handler.GroupMessageRequestHandler;
-import org.syh.demo.netty.chatapp.server.handler.JoinGroupRequestHandler;
-import org.syh.demo.netty.chatapp.server.handler.ListGroupMembersRequestHandler;
+import org.syh.demo.netty.chatapp.server.handler.HeartBeatRequestHandler;
+import org.syh.demo.netty.chatapp.server.handler.IMHandler;
 import org.syh.demo.netty.chatapp.server.handler.LoginRequestHandler;
-import org.syh.demo.netty.chatapp.server.handler.LogoutRequestHandler;
-import org.syh.demo.netty.chatapp.server.handler.MessageRequestHandler;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -40,18 +35,13 @@ public class NettyServer {
             .childOption(ChannelOption.TCP_NODELAY, true)
             .childHandler(new ChannelInitializer<NioSocketChannel>() {
                 protected void initChannel(NioSocketChannel ch) {
+                    ch.pipeline().addLast(new IMIdleStateHandler());
                     ch.pipeline().addLast(new Splitter());
-                    ch.pipeline().addLast(new PacketDecoder());
-                    ch.pipeline().addLast(new LoginRequestHandler());
-                    ch.pipeline().addLast(new LogoutRequestHandler());
-                    ch.pipeline().addLast(new AuthHandler());
-                    ch.pipeline().addLast(new CreateGroupRequestHandler());
-                    ch.pipeline().addLast(new JoinGroupRequestHandler());
-                    ch.pipeline().addLast(new ExitGroupRequestHandler());
-                    ch.pipeline().addLast(new ListGroupMembersRequestHandler());
-                    ch.pipeline().addLast(new GroupMessageRequestHandler());
-                    ch.pipeline().addLast(new MessageRequestHandler());
-                    ch.pipeline().addLast(new PacketEncoder());
+                    ch.pipeline().addLast(PacketCodecHandler.INSTANCE);
+                    ch.pipeline().addLast(LoginRequestHandler.INSTANCE);
+                    ch.pipeline().addLast(HeartBeatRequestHandler.INSTANCE);
+                    ch.pipeline().addLast(AuthHandler.INSTANCE);
+                    ch.pipeline().addLast(IMHandler.INSTANCE);
                 }
             });
         
